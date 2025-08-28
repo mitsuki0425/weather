@@ -1,0 +1,6 @@
+flask
+Flask-SQLAlchemy
+requests
+psycopg2
+python-dotenv
+line-bot-sdk
