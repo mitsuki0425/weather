@@ -17,6 +17,9 @@ CITIES = [
     {"name": "千歳", "lat": 42.819, "lon": 141.652}
 ]
 
+# Rain-related keywords
+RAIN_KEYWORDS = ["雨", "にわか雨", "小雨", "豪雨"]
+
 
 def get_forecast(city):
     url = f"http://api.openweathermap.org/data/2.5/forecast?lat={city['lat']}&lon={city['lon']}&appid={OPENWEATHER_API_KEY}&lang=ja&units=metric"
@@ -43,7 +46,9 @@ def get_forecast(city):
     weather_desc = weather_descriptions[0]
     max_pop = max(pops)
 
-    rain_note = "傘を忘れずに！" if max_pop > 0.3 else ""
+    has_rain_keyword = any(keyword in " ".join(weather_descriptions)
+                           for keyword in RAIN_KEYWORDS)
+    rain_note = "傘を忘れずに！" if max_pop > 0.3 or has_rain_keyword else ""
 
     return (
         f"{city['name']}の天気予報: {weather_desc}\n"
