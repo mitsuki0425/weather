@@ -1,6 +1,7 @@
 import os
 import requests
 from datetime import datetime
+from pytz import timezone
 from linebot.v3.messaging import Configuration, ApiClient, MessagingApi, PushMessageRequest, TextMessage
 from dotenv import load_dotenv
 
@@ -20,6 +21,8 @@ CITIES = [
 # Rain-related keywords
 RAIN_KEYWORDS = ["雨", "にわか雨", "小雨", "豪雨"]
 
+# Timezone for Japan
+japan = timezone('Asia/Tokyo')
 
 def get_forecast(city):
     url = f"http://api.openweathermap.org/data/2.5/forecast?lat={city['lat']}&lon={city['lon']}&appid={OPENWEATHER_API_KEY}&lang=ja&units=metric"
@@ -29,9 +32,9 @@ def get_forecast(city):
     if "list" not in data:
         return f"{city['name']}の天気予報を取得できませんでした（エラー: {data.get('message', '不明')})"
 
-    today = datetime.utcnow().date()
+    today = datetime.now(japan).date()
     today_forecasts = [entry for entry in data["list"]
-                       if datetime.fromtimestamp(entry["dt"]).date() == today]
+                       if datetime.fromtimestamp(entry["dt"], tz=japan).date() == today]
 
     if not today_forecasts:
         return f"{city['name']}の今日の天気予報が見つかりませんでした。"
@@ -55,7 +58,6 @@ def get_forecast(city):
         f"予想最高気温: {temp_max:.1f}℃ / 予想最低気温: {temp_min:.1f}℃\n"
         f"{rain_note}"
     )
-
 
 # Compile weather report for all cities
 weather_report = "\n\n".join([get_forecast(city) for city in CITIES])
