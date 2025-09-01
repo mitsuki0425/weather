@@ -3,4 +3,5 @@ Flask-SQLAlchemy
 requests
 psycopg2
 python-dotenv
-line-bot-sdk
+line-bot-sdk==3.0.0
+pytz
